@@ -1,0 +1,14 @@
+{% extends 'ads/base.html' %}
+{% block content %}
+<h1>{{ ad.title }}</h1>
+{% if ad.image_url %}<img src="{{ ad.image_url }}" alt="{{ ad.title }}">{% endif %}
+<p>{{ ad.description }}</p>
+<p>Категория: {{ ad.get_category_display }} | Состояние: {{ ad.get_condition_display }}</p>
+<p>Дата публикации: {{ ad.created_at }}</p>
+{% if user == ad.user %}
+  <a href="{% url 'ad-edit' ad.id %}" style="background: #28a745; color: white; padding: 6px 12px; border-radius: 5px;">Редактировать</a>
+  <a href="{% url 'ad-delete' ad.id %}" style="margin-left: 1rem; background: red; color: white; padding: 6px 12px; border-radius: 5px;">Удалить</a>
+{% else %}
+  <a href="{% url 'proposal-create' ad.id %}" style="background: #28a745; color: white; padding: 6px 12px; border-radius: 5px;">Предложить обмен</a>
+{% endif %}
+{% endblock %}

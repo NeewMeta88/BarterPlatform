@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Обмен вещами</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            margin: 20px;
+            background: #f4f4f4;
+        }
+
+        .ad-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 16px;
+        }
+
+        .ad-card {
+            background: white;
+            padding: 16px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .ad-card img {
+            width: 100%;
+            height: auto;
+            border-radius: 4px;
+        }
+
+        a {
+            text-decoration: none;
+            color: #007bff;
+        }
+    </style>
+</head>
+<body>
+<header>
+    <h1><a href="{% url 'ad-list' %}">Платформа обмена</a></h1>
+    <nav>
+        {% if user.is_authenticated %}
+            Привет, {{ user.username }} |
+            <form action="{% url 'logout' %}" method="post" style="display:inline;">
+                {% csrf_token %}
+                <button type="submit"
+                        style="background: red; color: white; padding: 6px 12px; border: none; border-radius: 5px; cursor: pointer; font-size: 15px;">
+                    Выход
+                </button>
+            </form>
+            {% if request.resolver_match.url_name == 'ad-list' %}
+                <a href="{% url 'ad-create' %}"
+                   style="margin-left: 1rem; background: #007bff; color: white; padding: 6px 12px; border-radius: 5px;">
+                    Создать объявление
+                </a>
+                <a href="{% url 'proposal-list' %}"
+                   style="margin-left: 1rem; background: #28a745; color: white; padding: 6px 12px; border-radius: 5px;">
+                    Мои обмены
+                </a>
+            {% elif request.resolver_match.url_name == 'proposal-list' %}
+                <a href="{% url 'ad-list' %}"
+                   style="margin-left: 1rem; background: #007bff; color: white; padding: 6px 12px; border-radius: 5px;">
+                    Объявления
+                </a>
+                <a href="{% url 'proposal-list' %}"
+                   style="margin-left: 1rem; background: #28a745; color: white; padding: 6px 12px; border-radius: 5px;">
+                    Мои обмены
+                </a>
+            {% elif request.resolver_match.url_name == 'proposal-detail' %}
+                <a href="{% url 'proposal-list' %}"
+                   style="margin-left: 1rem; background: #007bff; color: white; padding: 6px 12px; border-radius: 5px;">
+                    Назад
+                </a>
+            {% elif request.resolver_match.url_name == 'ad-detail' %}
+                <a href="{% url 'ad-list' %}"
+                   style="margin-left: 1rem; background: #007bff; color: white; padding: 6px 12px; border-radius: 5px;">
+                    Назад
+                </a>
+            {% endif %}
+
+        {% else %}
+            <a href="{% url 'login' %}" style="background: #28a745; color: white; padding: 6px 12px; border-radius: 5px;" >Вход</a> | <a href="{% url 'register' %}" style="background: #007bff; color: white; padding: 6px 12px; border-radius: 5px;" >Регистрация</a>
+        {% endif %}
+    </nav>
+    {% if request.resolver_match.url_name == 'ad-list' %}
+        <form method="get" action="{% url 'ad-list' %}" style="margin-top: 1rem;">
+            <input type="text" name="search" placeholder="Поиск..." value="{{ request.GET.search }}">
+            <select name="category">
+                <option value="">Все категории</option>
+                <option value="electronics" {% if request.GET.category == 'electronics' %}selected{% endif %}>
+                    Электроника
+                </option>
+                <option value="books" {% if request.GET.category == 'books' %}selected{% endif %}>Книги</option>
+                <option value="clothes" {% if request.GET.category == 'clothes' %}selected{% endif %}>Одежда</option>
+            </select>
+            <select name="condition">
+                <option value="">Любое состояние</option>
+                <option value="new" {% if request.GET.condition == 'new' %}selected{% endif %}>Новое</option>
+                <option value="good" {% if request.GET.condition == 'good' %}selected{% endif %}>Хорошее</option>
+                <option value="used" {% if request.GET.condition == 'used' %}selected{% endif %}>Б/У</option>
+            </select>
+            <button type="submit">Фильтровать</button>
+        </form>
+    {% elif request.resolver_match.url_name == 'proposal-list' %}
+        <form method="get" action="{% url 'proposal-list' %}" style="margin-top: 1rem;">
+            <input type="text" name="sender" placeholder="Отправитель" value="{{ request.GET.sender }}">
+            <input type="text" name="receiver" placeholder="Получатель" value="{{ request.GET.receiver }}">
+            <select name="status">
+                <option value="">Все статусы</option>
+                <option value="pending" {% if request.GET.status == 'pending' %}selected{% endif %}>Ожидает</option>
+                <option value="accepted" {% if request.GET.status == 'accepted' %}selected{% endif %}>Принято</option>
+                <option value="rejected" {% if request.GET.status == 'rejected' %}selected{% endif %}>Отклонено</option>
+            </select>
+            <button type="submit">Фильтровать</button>
+        </form>
+    {% endif %}
+    {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+                <li class="{{ message.tags }}">{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+</header>
+<hr>
+{% block content %}{% endblock %}
+</body>
+</html>

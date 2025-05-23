@@ -1,0 +1,71 @@
+{% extends 'ads/base.html' %}
+{% block content %}
+<h1>Детали предложения обмена</h1>
+
+<div style="display: flex; gap: 2rem; margin-bottom: 2rem;">
+
+{% if proposal.ad_sender.user == user %}
+  {% with ad=proposal.ad_sender other=proposal.ad_receiver %}
+    <div class="ad-card" style="flex: 1;">
+      <h2>Ваш товар:</h2>
+      <p><strong>Заголовок:</strong> {{ ad.title }}</p>
+      <p><strong>Описание:</strong> {{ ad.description }}</p>
+      <p><strong>Категория:</strong> {{ ad.get_category_display }}</p>
+      <p><strong>Состояние:</strong> {{ ad.get_condition_display }}</p>
+      {% if ad.image_url %}
+        <img src="{{ ad.image_url }}" alt="{{ ad.title }}" style="max-width: 100%;">
+      {% endif %}
+    </div>
+
+    <div class="ad-card" style="flex: 1;">
+      <h2>В обмен на:</h2>
+      <p><strong>Заголовок:</strong> {{ other.title }}</p>
+      <p><strong>Описание:</strong> {{ other.description }}</p>
+      <p><strong>Категория:</strong> {{ other.get_category_display }}</p>
+      <p><strong>Состояние:</strong> {{ other.get_condition_display }}</p>
+      {% if other.image_url %}
+        <img src="{{ other.image_url }}" alt="{{ other.title }}" style="max-width: 100%;">
+      {% endif %}
+    </div>
+  {% endwith %}
+{% else %}
+  {% with ad=proposal.ad_receiver other=proposal.ad_sender %}
+    <div class="ad-card" style="flex: 1;">
+      <h2>Ваш товар:</h2>
+      <p><strong>Заголовок:</strong> {{ ad.title }}</p>
+      <p><strong>Описание:</strong> {{ ad.description }}</p>
+      <p><strong>Категория:</strong> {{ ad.get_category_display }}</p>
+      <p><strong>Состояние:</strong> {{ ad.get_condition_display }}</p>
+      {% if ad.image_url %}
+        <img src="{{ ad.image_url }}" alt="{{ ad.title }}" style="max-width: 100%;">
+      {% endif %}
+    </div>
+
+    <div class="ad-card" style="flex: 1;">
+      <h2>В обмен на:</h2>
+      <p><strong>Заголовок:</strong> {{ other.title }}</p>
+      <p><strong>Описание:</strong> {{ other.description }}</p>
+      <p><strong>Категория:</strong> {{ other.get_category_display }}</p>
+      <p><strong>Состояние:</strong> {{ other.get_condition_display }}</p>
+      {% if other.image_url %}
+        <img src="{{ other.image_url }}" alt="{{ other.title }}" style="max-width: 100%;">
+      {% endif %}
+    </div>
+  {% endwith %}
+{% endif %}
+
+</div>
+
+<div class="ad-card">
+  <p><strong>Комментарий:</strong> {{ proposal.comment }}</p>
+  <p><strong>Статус:</strong> {{ proposal.get_status_display }}</p>
+
+  {% if user == proposal.ad_receiver.user and proposal.status == 'pending' %}
+    <form method="post" style="margin-top:1rem;">
+      {% csrf_token %}
+      <button name="status" value="accepted" style="background: #28a745; color: white; padding: 8px 12px; border-radius: 5px; border: none; cursor: pointer; font-size: 15px;">Принять</button>
+      <button name="status" value="rejected" style="background:red;color:white;padding:8px 12px;border-radius:5px; border: none; cursor: pointer; font-size: 15px;">Отклонить</button>
+    </form>
+  {% endif %}
+</div>
+{% endblock %}

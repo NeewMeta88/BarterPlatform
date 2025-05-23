@@ -1,0 +1,23 @@
+{% extends 'ads/base.html' %}
+{% block content %}
+    <h1>Ваши предложения обмена</h1>
+    {% for proposal in proposals %}
+        <a href="{% url 'proposal-detail' proposal.pk %}" style="color: inherit; text-decoration: none;">
+            <div class="ad-card">
+                {% if request.user == proposal.ad_sender.user %}
+                    <p><strong>Ваш товар:</strong> {{ proposal.ad_sender.title }}</p>
+                    <p><strong>В обмен на:</strong> {{ proposal.ad_receiver.title }}</p>
+                {% else %}
+                    <p><strong>Ваш товар:</strong> {{ proposal.ad_receiver.title }}</p>
+                    <p><strong>В обмен на:</strong> {{ proposal.ad_sender.title }}</p>
+                {% endif %}
+
+                <p><strong>Комментарий:</strong> {{ proposal.comment }}</p>
+                <p><strong>Статус:</strong> {{ proposal.get_status_display }}</p>
+            </div>
+        </a>
+        <br>
+    {% empty %}
+        <p>Нет предложений обмена.</p>
+    {% endfor %}
+{% endblock %}
