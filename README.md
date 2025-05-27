@@ -9,7 +9,7 @@
 ### 1. Клонируйте проект
 
 ```bash
-git clone https://example.com/your-repo.git barter_platform
+git clone https://github.com/NeewMeta88/EffectiveMobile.git
 cd barter_platform
 ```
 
